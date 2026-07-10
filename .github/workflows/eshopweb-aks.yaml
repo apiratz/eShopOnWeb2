@@ -3,6 +3,8 @@ on: workflow_dispatch
 env:
   ACR_LOGIN_SERVER: aistraining.azurecr.io
   TAG_NAME: eshoponwebapp-012:1.0.2
+  AZURE_RESOURCE_GROUP: rg-012
+  AZURE_CLUSTER_NAME: aks-demo
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,3 +23,22 @@ jobs:
         run: |
           docker build -f src/Web/Dockerfile -t ${{ env.ACR_LOGIN_SERVER }}/${{env.TAG_NAME}} .
           docker push ${{ env.ACR_LOGIN_SERVER }}/${{env.TAG_NAME}}
+
+  deploy-to-aks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.AZURE_RESOURCE_GROUP }}
+          cluster-name: ${{ env.AZURE_CLUSTER_NAME }}
+      - uses: azure/k8s-deploy@v1
+        with:
+          action: deploy
+          images: ${{ env.ACR_LOGIN_SERVER }}/${{ env.TAG_NAME }}
+          manifests: |
+            - .k8s/deployment.yaml
+            - .k8s/service.yaml
+
+          
