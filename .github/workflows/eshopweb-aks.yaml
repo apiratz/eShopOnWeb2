@@ -2,7 +2,7 @@ name: eShopOnWeb AKS Deployment
 on: workflow_dispatch
 env:
   ACR_LOGIN_SERVER: aistraining.azurecr.io
-  TAG_NAME: eshopweb
+  TAG_NAME: eshoponwebapp-012
 jobs:
   deploy:
     runs-on: ubuntu-latest
