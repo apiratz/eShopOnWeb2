@@ -3,10 +3,11 @@ on: workflow_dispatch
 env:
   ACR_LOGIN_SERVER: aistraining.azurecr.io
   TAG_NAME: eshoponwebapp-012:1.0.2
-  AZURE_RESOURCE_GROUP: rg-012
+  AZURE_RESOURCE_GROUP: ais-training
   AZURE_CLUSTER_NAME: aks-demo
 jobs:
   build-container:
+    if: false  
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
@@ -25,7 +26,7 @@ jobs:
           docker push ${{ env.ACR_LOGIN_SERVER }}/${{env.TAG_NAME}}
 
   deploy-to-aks:
-    needs: build-container
+    # needs: build-container
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
